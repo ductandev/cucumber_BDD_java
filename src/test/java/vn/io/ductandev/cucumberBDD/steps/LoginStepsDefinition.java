@@ -29,7 +29,7 @@ public class LoginStepsDefinition {
     // Common XPaths
     private static final String XPATH_HOME_LINK = "//a[contains(text(),'홈')]";
     private static final String XPATH_BUTTON = "//button[contains(text(),'%s')]";
-    private static final String XPATH_ERROR_MESSAGE = "//div[contains(text(),'%s')]";
+    private static final String XPATH_ERROR_MESSAGE = "//p[contains(text(),'%s')] | //div[contains(text(),'%s')]";
     private static final String XPATH_ERROR_EMAIL_MESSAGE = "//p[contains(text(),'%s')]";
     private static final String XPATH_ERROR_PASSWORD_MESSAGE = "//p[contains(text(),'%s')]";
 
@@ -52,11 +52,14 @@ public class LoginStepsDefinition {
         driver.get(LOGIN_URL);
         validateUrl(LOGIN_URL, ERROR_LOGIN_URL);
     }
+    @When("the user enters {string} into the email field")
+    public void enterUsername(String email) {
+        enterTextByName("email", email);
+    }
 
-    @When("the user enters valid credentials")
-    public void enterValidCredentials() {
-        enterTextByName("email", EMAIL);
-        enterTextByName("password", PASSWORD);
+    @And("enters {string} into the password field")
+    public void enterPassword(String password) {
+        enterTextByName("password", password);
     }
 
     @And("clicks the {string} button")
@@ -71,19 +74,14 @@ public class LoginStepsDefinition {
         waitForElementVisibility(By.xpath(XPATH_HOME_LINK));
     }
 
-    @When("the user enters a valid username")
-    public void enterValidUsername() {
-        enterTextByName("email", EMAIL);
+    @Then("the user should see an error message 1 {string}")
+    public void validateErrorMessage_1(String message) {
+        waitForTextToBePresent(By.xpath(String.format(XPATH_ERROR_MESSAGE, message, message)), message);
     }
 
-    @And("enters an incorrect password")
-    public void enterIncorrectPassword() {
-        enterTextByName("password", "SaiMatKhau123@"); // Incorrect password
-    }
-
-    @Then("the user should see an error message {string}")
-    public void validateErrorMessage(String message) {
-        waitForTextToBePresent(By.xpath(String.format(XPATH_ERROR_MESSAGE, message)), message);
+    @Then("the user should see an error message 2 {string}")
+    public void validateErrorMessage_2(String message) {
+        waitForTextToBePresent(By.xpath(String.format(XPATH_ERROR_MESSAGE, message, message)), message);
     }
 
     @And("the user remains on the login page")
@@ -91,33 +89,6 @@ public class LoginStepsDefinition {
         validateUrl(LOGIN_URL, ERROR_LOGIN_PAGE);
     }
 
-    @When("the user enters a non-existent username")
-    public void enterNonExistentUsername() {
-        enterTextByName("email", "emailkhongtontai@example.com");
-        enterTextByName("password", PASSWORD);
-    }
-
-    @And("any password")
-    public void enterAnyPassword() {
-        enterTextByName("password", "batkyMatKhau123@");
-    }
-
-
-    @When("the user leaves the username or password field empty")
-    public void leaveUsernameOrPasswordFieldEmpty() {
-        enterTextByName("email", "");
-        enterTextByName("password", "");
-    }
-
-    @Then("the user should see an error email message {string}")
-    public void errorEmailMessage(String message) {
-        waitForTextToBePresent(By.xpath(String.format(XPATH_ERROR_EMAIL_MESSAGE, message)), message);
-    }
-
-    @And("the user should see an error password message {string}")
-    public void errorPasswordMessage(String message) {
-        waitForTextToBePresent(By.xpath(String.format(XPATH_ERROR_PASSWORD_MESSAGE, message)), message);
-    }
 
     @io.cucumber.java.After
     public void tearDown() {
