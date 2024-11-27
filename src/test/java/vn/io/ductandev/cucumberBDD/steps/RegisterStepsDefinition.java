@@ -1,4 +1,3 @@
-// File: RegisterStepsDefinition.java
 package vn.io.ductandev.cucumberBDD.steps;
 
 import io.cucumber.java.Before;
@@ -23,7 +22,7 @@ public class RegisterStepsDefinition {
 
     private static final String REGISTER_URL = "http://203.205.26.244:4000/register";
     private static final String LOGINPAGE_URL_FRAGMENT = "/login";
-    private static final String EMAIL = "vemose1671@kazvi.com";      // https://10minemail.com
+    private static final String EMAIL = "wewije8720@kindomd.com";      // https://10minemail.com
     private static final String PASSWORD = "Ductan123@";
     private static final String USERNAME = "Duc Tan";
     private static final Duration TIMEOUT = Duration.ofSeconds(10);
@@ -52,6 +51,16 @@ public class RegisterStepsDefinition {
         validateUrl(REGISTER_URL, ERROR_REGISTER_URL);
     }
 
+    @When("the user enters an invalid email {string}")
+    public void enterInvalidEmail(String email) {
+        enterTextByName("email", email);
+    }
+
+    @Then("the user should see an error validate message {string}")
+    public void validateErrorMessage(String message) {
+        waitForTextToBePresent(By.xpath(String.format(XPATH_ERROR_MESSAGE, message)), message);
+    }
+
     @When("the user enters a valid email")
     public void enterValidDetails() {
         enterTextByName("email", EMAIL);
@@ -64,7 +73,7 @@ public class RegisterStepsDefinition {
 
     @And("I click the {string} button to verify")
     public void clickButtonVerify(String buttonName) {
-        System.out.println("✅ Vui lòng nhập mã xác thực từ gmail: ");
+        System.out.println("✅ Vui lòng check gmail và nhập mã xác thực (thời gian 30s): ");
         sleep(30);
 
         clickButtonByText(buttonName);
@@ -92,54 +101,34 @@ public class RegisterStepsDefinition {
         System.out.println("✅ Chuyển về trang login thành công: ");
     }
 
-
-
-    @When("the user enters an invalid email address")
-    public void enterInvalidEmail() {
-        enterTextByName("email", "invalid-email");
+    @When("the user enters a email that already exists")
+    public void enterExistingEmail() {
+        enterTextByName("email", EMAIL);
     }
 
-    @Then("the user should see an error validate message {string}")
-    public void validateErrorMessage(String message) {
-        waitForTextToBePresent(By.xpath(String.format(XPATH_ERROR_MESSAGE, message)), message);
+    @Then("the user should see an error message {string}")
+    public void errorMessage(String message) {
+        waitForTextToBePresent(By.xpath(String.format(XPATH_MESSAGE, message)), message);
     }
 
+    @When("the user enters a {string} that does not meet complexity requirements")
+    public void enterWeakPassword(String password) {
+        enterTextByName("password", password);
+    }
 
-//
-//    @When("the user enters a password and a confirmation password that do not match")
-//    public void enterNonMatchingPasswords() {
-//        enterTextByName("password", "StrongPassword123");
-//        enterTextByName("confirmPassword", "DifferentPassword123");
-//    }
-//
-//    @When("the user enters a username that already exists")
-//    public void enterExistingUsername() {
-//        enterTextByName("username", "existinguser");
-//        enterTextByName("email", "existinguser@example.com");  // Replace with valid but existing email
-//        enterTextByName("password", "StrongPassword123");
-//        enterTextByName("confirmPassword", "StrongPassword123");
-//    }
-//
-//    @When("the user leaves one or more required fields empty")
-//    public void leaveRequiredFieldsEmpty() {
-//        enterTextByName("username", "");
-//        enterTextByName("email", "");
-//        enterTextByName("password", "");
-//        enterTextByName("confirmPassword", "");
-//    }
-//
-//    @When("the user enters a password that does not meet complexity requirements")
-//    public void enterWeakPassword() {
-//        enterTextByName("password", "weakpw");
-//        enterTextByName("confirmPassword", "weakpw");
-//    }
-//
+    @When("the user enters a password and a confirmation password that do not match")
+    public void enterNonMatchingPasswords() {
+        enterTextByName("password", PASSWORD);
+        enterTextByName("rePassword", "DifferentPassword123");
+    }
 
-//
-//    @And("clicks the {string} button")
-//    public void clickButton(String buttonName) {
-//        clickButtonByText(buttonName);
-//    }
+    @When("the user leaves one or more required fields empty")
+    public void leaveRequiredFieldsEmpty() {
+        enterTextByName("password", "");
+        enterTextByName("rePassword", "");
+        enterTextByName("contactName", "");
+        enterTextByName("personInCharge", "one");
+    }
 
     @io.cucumber.java.After
     public void tearDown() {
