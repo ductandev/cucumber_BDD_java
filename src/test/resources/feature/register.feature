@@ -33,6 +33,7 @@ Feature: User Registration
       | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com |
 
   # Trường hợp: Email hợp lệ nhưng Mật khẩu không đủ mạnh
+  # ⭐ Chương trình thiếu trường hợp ký tự đặc biệt
   Scenario Outline: Registration fails with weak password
     When the user enters a valid email
     And I click the "인증 코드 요청" button
