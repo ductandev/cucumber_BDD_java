@@ -6,10 +6,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -22,8 +19,9 @@ public class RegisterStepsDefinition {
 
     private static final String REGISTER_URL = "http://203.205.26.244:4000/register";
     private static final String LOGINPAGE_URL_FRAGMENT = "/login";
-    private static final String EMAIL = "wewije8720@kindomd.com";      // https://10minemail.com
+    private static final String EMAIL = "kaxatir639@luxyss.com";      // https://10minemail.com
     private static final String PASSWORD = "Ductan123@";
+    private static final String[] TEST_PASSWORD = {"short", "alllowercase", "ALLUPPERCASE", "12345678", "password1", "PASSWORD1", "pass@word", "PASS@WORD", "Pass!", "Pass word1@", "Pass1234"};
     private static final String USERNAME = "Duc Tan";
     private static final Duration TIMEOUT = Duration.ofSeconds(10);
 
@@ -35,6 +33,7 @@ public class RegisterStepsDefinition {
     // Error Messages
     private static final String ERROR_REGISTER_URL = "Cannot open Register page URL";
     private static final String ERROR_LOGIN_REDIRECT = "Did not redirect correctly to Login";
+    private static final String ERROR_VALIDATE_PASSWORD = "비밀번호는 최소 8자리 이상이며, 대문자, 소문자, 숫자, 특수문자 각각 하나 이상 포함해야 합니다";
 
     private WebDriver driver;
 
@@ -111,9 +110,18 @@ public class RegisterStepsDefinition {
         waitForTextToBePresent(By.xpath(String.format(XPATH_MESSAGE, message)), message);
     }
 
-    @When("the user enters a {string} that does not meet complexity requirements")
-    public void enterWeakPassword(String password) {
-        enterTextByName("password", password);
+    @When("the user enters a password that does not meet complexity requirements")
+    public void enterWeakPassword() {
+        for (String testPassword : TEST_PASSWORD) {
+            enterTextByName("password", testPassword);
+            try {
+                validateErrorMessage(ERROR_VALIDATE_PASSWORD);
+                System.out.println("✅Password Pass: " + testPassword);
+            } catch (RuntimeException e) {
+                System.out.println("❌Password failed: " + testPassword);
+                throw e;
+            }
+        }
     }
 
     @When("the user enters a password and a confirmation password that do not match")
@@ -139,7 +147,9 @@ public class RegisterStepsDefinition {
 
     // Helper Methods
     private void enterTextByName(String name, String text) {
-        driver.findElement(By.name(name)).sendKeys(text);
+        WebElement element = driver.findElement(By.name(name));
+        element.clear();
+        element.sendKeys(text);
     }
 
     private void clickButtonByText(String buttonName) {

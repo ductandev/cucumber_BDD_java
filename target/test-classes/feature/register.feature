@@ -1,3 +1,4 @@
+@regression @Register
 Feature: User Registration
 
   Background: The user is on the registration page
@@ -30,29 +31,33 @@ Feature: User Registration
       | user@exámple.com                  |
       | usér@example.com                  |
       | user@@example.com                 |
+      | username@ex ample.com             |
+      | username@exam<ple.com             |
+      | username@example>com              |
       | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com |
 
   # Trường hợp: Email hợp lệ nhưng Mật khẩu không đủ mạnh
-  Scenario Outline: Registration fails with weak password
+  # ⭐ Chương trình FE thiếu trường hợp ký tự đặc biệt
+  Scenario: Registration fails with weak password
     When the user enters a valid email
     And I click the "인증 코드 요청" button
     And I click the "인증 확인" button to verify
-    And the user enters a "<password>" that does not meet complexity requirements
+    And the user enters a password that does not meet complexity requirements
     Then the user should see an error validate message "비밀번호는 최소 8자리 이상이며, 대문자, 소문자, 숫자, 특수문자 각각 하나 이상 포함해야 합니다"
 
-    Examples:
-      | password         |
-      | short            |
-#      | alllowercase     |
-#      | ALLUPPERCASE     |
-#      | 12345678         |
-#      | password1        |
-#      | PASSWORD1        |
-#      | Pass1234         |
-#      | pass@word        |
-#      | PASS@WORD        |
-#      | Pass!            |
-#      | Pass word1@      |
+#    Examples:
+#      | password         | # Error description                                                       |
+#      | short            | # Dưới 8 ký tự                                                            |
+#      | alllowercase     | # Không có chữ viết hoa, số hoặc ký tự đặc biệt                           |
+#      | ALLUPPERCASE     | # Không có chữ viết thường, số hoặc ký tự đặc biệt                        |
+#      | 12345678         | # Không có chữ viết hoa, chữ viết thường hoặc ký tự đặc biệt              |
+#      | password1        | # Không có chữ viết hoa hoặc ký tự đặc biệt                               |
+#      | PASSWORD1        | # Không có chữ viết thường hoặc ký tự đặc biệt                            |
+#      | Pass1234         | # Không có ký tự đặc biệt                                                 |
+#      | pass@word        | # Không có chữ viết hoa hoặc số                                           |
+#      | PASS@WORD        | # Không có chữ viết thường hoặc số                                        |
+#      | Pass!            | # Dưới 8 ký tự và không có số                                             |
+#      | Pass word1@      | # Có khoảng trắng, điều này thường không được chấp nhận tùy theo quy định |
 
 
   # Trường hợp: Mật khẩu không khớp
